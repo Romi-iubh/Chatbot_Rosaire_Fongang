@@ -1,0 +1,335 @@
+version: '3.1'
+intents:
+  - affirm
+  - ask_amenity:
+      used_entities:
+      - MONEY
+      - PERSON
+      - QUANTITY
+      - accommodation
+      - agent
+      - amenity
+      - booking_info_to_change
+      - company
+      - date
+      - date#datein
+      - date#dateout
+      - email
+      - entity
+      - job_function
+      - language
+      - name
+      - number
+      - pet
+      - phone_number
+      - place
+      is_retrieval_intent: true
+  - ask_shuttle_in
+  - ask_shuttle_out
+  - bot_challenge
+  - bye
+  - deny
+  - give_check_in_date
+  - give_check_out_date
+  - give_information
+  - greet
+  - out_of_scope
+  - request_booking
+  - request_breakfast
+  - thank
+entities:
+  - number
+  - date:
+      roles:
+      - datein
+      - dateout
+  - email
+  - accommodation
+  - amenity
+  - booking_info_to_change
+  - entity
+  - pet
+  - vehicle
+  - place
+  - name
+  - phone_number
+  - job_function
+  - language
+  - company
+  - agent
+  - PERSON
+
+slots:
+  name:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: PERSON
+
+  check_in_date:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: date
+      role: datein
+    - type: from_entity
+      entity: date
+      conditions:
+      - active_loop: hotel_form
+        requested_slot: check_in_date
+
+  check_out_date:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: date
+      role: dateout
+    - type: from_entity
+      entity: date
+      conditions:
+      - active_loop: hotel_form
+        requested_slot: check_out_date
+
+  number_of_room:
+    type: float
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: number
+      conditions:
+      - active_loop: hotel_form
+        requested_slot: number_of_room
+
+  number_of_guest:
+    type: float
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: number
+      conditions:
+      - active_loop: hotel_form
+        requested_slot: number_of_guest
+
+  payment_method:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+  breakfast:
+    type: bool
+    influence_conversation: false
+    mappings:
+    - type: from_intent
+      value: true
+      intent: request_breakfast
+
+  booking_info_to_change:
+    type: text
+    influence_conversation: true
+    mappings:
+    - type: from_entity
+      entity: booking_info_to_change
+      intent: give_information
+      
+  room_type:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  floor_level:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  shuttle_in:
+    type: bool
+    influence_conversation: true
+    mappings:
+    - type: from_intent
+      value: true
+      intent: ask_shuttle_in
+
+  shuttle_out:
+    type: bool
+    influence_conversation: false
+    mappings:
+    - type: from_intent
+      value: true
+      intent: ask_shuttle_out
+
+  pick_up_address:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  drop_off_address:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+  email:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: email
+      conditions:
+      - active_loop: hotel_form
+        requested_slot: email
+    - type: custom
+      
+responses:
+  utter_greet:
+  - text: Hello!
+  - text: Hi!
+  utter_greet_help:
+  - text: Hello, thank you for contacting King David Hotel. Can I help you with an accommodation booking?
+  - text: Hi, thank you for contacting King David Hotel. Do you need an accommodation?
+  - text: Hello, thank you for contacting King David Hotel! Are you looking for a place to stay?
+  utter_greet_help_name:
+  - text: Hello {name}! Thank you for contacting Kind David Hotel. Can I help with a booking?
+  - text: Hello {name}! Do you need an accommodation?
+  utter_ask_name:
+  - text: May I know your name, please?
+  utter_ask_check_in_date:
+  - text: When are you arriving? (dd/mm/yyyy" format)
+  - text: What is your ckeck-in date? ("dd/mm/yyyy" format)
+  - text: When will you be ckecking-in? (dd/mm/yyyy" format)
+  utter_ask_check_out_date:
+  - text: When will you be leaving the hotel ("dd/mm/yyyy" format)
+  - text: When will you be ckecking-out date ("dd/mm/yyyy" format)
+  utter_ask_number_of_guest:
+  - text: For how many people do you need accommodation? (Please use numeric characters)
+  - text: How many are you, please? (Please use numeric characters)
+  - text: May I know the number of guests? (Please use numeric characters)
+  utter_ask_number_of_room:
+  - text: How many rooms do you want? (Please use numeric characters)
+  utter_ask_payment_method:
+  - text: Will you be paying card or cash?
+  utter_ask_breakfast:
+  - text: Would you like breakfast to be included?
+  utter_ask_room_type:
+  - text: Do you need a standard room or a suite?
+  utter_ask_floor_level:
+  - text: Do you prefer a higher or lower floor?
+  utter_ask_shuttle_in:
+  - text: Would you like a shuttle to be organized?
+  - text: Need a shuttle to the hotel?
+  utter_ask_shuttle_out:
+  - text: Do you need a shuttle from the hotel when you check out?
+  utter_ask_pick_up_address:
+  - text: From which address should we pick you up?
+  utter_ask_drop_off_address:
+  - text: What is the address for the delivery?
+  utter_ask_email:
+  - text: Can you please provide your email address?
+  utter_ask_amenity/parking:
+  - text: We have a parking lot available in the basement of the hotel.
+  utter_ask_amenity/pool:
+  - text: We have a pool open 24/7
+  utter_ask_amenity/restaurant:
+  - text: We have a restaurant in the hotel. It is open from 6 am to 9 pm
+  utter_ask_amenity/breakfast:
+  - text: We do offer breakfast for your convenience.
+  utter_ask_amenity/pet:
+  - text: Pets are unfortunately not allowed in the hotel, sorry.
+  utter_ask_amenity/shuttle:
+  - text: We do offer a shuttle service
+  utter_ask_amenity/other:
+  - text: Sorry, we do not offer this amenity.
+  utter_affirm:
+  - text: Yes
+  - text: Sure!
+  utter_aknowledge:
+  - text: Copy that!
+  - text: Noted
+  utter_ask_confirmation:
+  - text: Is that fine with you?
+  - text: Are you happy with that?
+  utter_iamabot:
+  - text: I am a bot
+  utter_bot_scope:
+  - text: My goal is to help you booking a hotel room.
+  utter_did_that_help:
+  - text: Did that help you?
+  utter_happy:
+  - text: Great!
+  - text: Awesome!
+  utter_bye:
+  - text: Thank you for choosing King David Hotel. See you soon!
+  utter_happy_bye:
+  - text: Awesome! We are looking forward to welcome you. Good bye!
+  utter_default:
+  - text: I am afraid I can't help you, unfortunately.
+  utter_ask_rephrase:
+  - text: My apologies, I didn't understand that. Kindly rephrase.
+  - text: I am afraid I don't get it. Say it again please.
+  - text: I'm not sure I got it well. Kindly rephrase, please.
+  utter_change_info:
+  - text: Which information would you like to change?
+    buttons:
+    - title: Name
+      payload: /give_information{{"booking_info_to_change":"name"}}
+    - title: Check-in date
+      payload: /give_information{{"booking_info_to_change":"check_in_date"}}
+    - title: Check-out date
+      payload: /give_information{{"booking_info_to_change":"check_out_date"}}
+    - title: Number of guest
+      payload: /give_information{{"booking_info_to_change":"number_of_guest"}}
+    - title: Number of room
+      payload: /give_information{{"booking_info_to_change":"number_of_room"}}
+    - title: Breakfast
+      payload: /give_information{{"booking_info_to_change":"breakfast"}}
+    - title: Room type
+      payload: /give_information{{"booking_info_to_change":"room_type"}}
+    - title: Floor level
+      payload: /give_information{{"booking_info_to_change":"floor_level"}}
+    - title: Shuttle
+      payload: /give_information{{"booking_info_to_change":"shuttle_in"}}
+    - title: Payment method
+      payload: /give_information{{"booking_info_to_change":"payment_method"}}
+    - title: email
+      payload: /give_information{{"booking_info_to_change":"email"}}
+  utter_out_of_scope:
+  - text: Sorry, I can only help you with your hotel booking.
+  utter_input_not_valid:
+  - text: Sorry, the {input} entered is not valid
+forms:
+  hotel_form:
+    required_slots:
+    - name
+    - check_in_date
+    - check_out_date
+    - number_of_guest
+    - number_of_room
+    - breakfast
+    - room_type
+    - floor_level
+    - shuttle_in
+    - payment_method
+    - email
+actions:
+- action_change_info
+- action_confirm_booking
+- utter_ask_amenity
+- utter_ask_confirmation
+- utter_bye
+- utter_change_info
+- utter_greet_help
+- utter_happy
+- utter_happy_bye
+- validate_hotel_form
+- utter_default
+- action_two_stage_fallback
+- action_default_fallback
+
+session_config:
+  session_expiration_time: 30
+  carry_over_slots_to_new_session: true
